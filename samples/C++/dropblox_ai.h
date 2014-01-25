@@ -99,8 +99,8 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
-  int count_holes ();
-
+  // h0 = the number of holes in the playfield
+  int count_holes(Bitmap& newState);
   // h2 = the number of full cells in the playfield
   int full_cells(Bitmap& newState);
   // h3 = the value of the higher slope in the playfield

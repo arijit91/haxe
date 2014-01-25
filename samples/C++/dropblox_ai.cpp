@@ -256,27 +256,6 @@ Board* Board::place() {
   return new_board;
 }
 
-int Board::count_holes () 
-{
-     // A cell is a hole if it is empty but somewhere above it, there is
-     // block or part of a block.
-     int row, col, has_ceiling;
-     unsigned int hole_count = 0;
-     for (col = 0; col < COLS; col++) {
-          has_ceiling = 0;
-          for (row = 0; row < ROWS; row++) {
-               if ((this->bitmap[row][col] == 0) &&
-                   (has_ceiling == 1)) {
-                    hole_count++;
-               }
-               if (this->bitmap[row][col] == 1) {
-                    has_ceiling = 1;
-               }
-          }
-     }
-     return hole_count;
-}
-
 // A static method that takes in a new_bitmap and removes any full rows from it.
 // Mutates the new_bitmap in place.
 void Board::remove_rows(Bitmap* new_bitmap) {
@@ -302,6 +281,27 @@ void Board::remove_rows(Bitmap* new_bitmap) {
       (*new_bitmap)[i][j] = 0;
     }
   }
+}
+
+int Board::count_holes(Bitmap& newState) 
+{
+  // A cell is a hole if it is empty but somewhere above it, there is
+  // block or part of a block.
+  int row, col, has_ceiling;
+  unsigned int hole_count = 0;
+  for (col = 0; col < COLS; col++) {
+    has_ceiling = 0;
+    for (row = 0; row < ROWS; row++) {
+      if ((newState[row][col] == 0) &&
+         (has_ceiling == 1)) {
+          hole_count++;
+      }
+      if (newState[row][col] == 1) {
+          has_ceiling = 1;
+      }
+    }
+  }
+  return hole_count;
 }
 
 int Board::full_cells(Bitmap& newState) {
@@ -342,7 +342,7 @@ int Board::full_cells_weighted(Bitmap& newState) {
 
 float Board::get_score(Bitmap& newState) {
   float score = 0.0;
-  score += heuristic_params[0]*holes(newState);
+  score += heuristic_params[0]*count_holes(newState);
   score += heuristic_params[1]*altitude(newState);
   score += heuristic_params[2]*full_cells(newState);
   score += heuristic_params[3]*higher_slope(newState);
