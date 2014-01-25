@@ -158,12 +158,13 @@ Board::Board() {
   rows = ROWS;
   cols = COLS;
 
-  heuristic_params[0] = 1.0;
-  heuristic_params[1] = 0;
-  heuristic_params[2] = 0;
-  heuristic_params[3] = 0;
-  heuristic_params[4] = 0;
-  heuristic_params[5] = 0;
+  heuristic_params[0] = 20.0;
+  heuristic_params[1] = 1.0;
+  heuristic_params[2] = 1.0;
+  heuristic_params[3] = 1.0;
+  heuristic_params[4] = 1.0;
+  heuristic_params[5] = 1.0;
+  //heuristic_params[6] = .0;
 }
 
 Board::Board(Object& state) {
@@ -483,6 +484,55 @@ int Board::altitude(Bitmap &newState) {
   return res;
 }
 
+int dirX[] = {-1, 0, 0, 1};
+int dirY[] = {0, 1, -1, 0};
+
+inline
+bool sameColor(int x1, int y1, int x2, int y2, Bitmap &newState) {
+  if (newState[x1][y1] == 0 && newState[x2][y2] == 0)
+    return true;
+
+  if (newState[x1][y1] != 0 && newState[x2][y2] != 0)
+    return true;
+
+  return false;
+}
+
+void dfs(Bitmap &newState, int x, int y, vector< vector<bool> > &visited) {
+
+  if (visited[x][y])
+    return;
+
+  visited[x][y] = true;
+  for (int i = 0; i < 4; i++) {
+    int newX = x + dirX[i];
+    int newY = y + dirY[i];
+    if (newX < 0 || newX >= ROWS || newY < 0 || newY >= COLS) {
+      continue;
+    }
+
+    if (sameColor(newX, newY, x, y, newState)) {
+      dfs(newState, newX, newY, visited);
+    }
+  }
+}
+int Board::countComponents(Bitmap &newState) {
+
+  int res = 0;
+  vector< vector<bool> > visited(ROWS, vector<bool>(COLS, false));
+
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (visited[i][j])
+        continue;
+      // cout << i << "\t" << j << endl;
+      res++;
+      dfs(newState, i, j, visited);
+    }
+  }
+  return res;
+}
+
 int Board::roughness(Bitmap &newState) {
      int row, col, has_ceiling = 0;
      unsigned int sum_height = 0;
@@ -622,14 +672,15 @@ int Board::full_cells_weighted(Bitmap& newState) {
 float Board::get_score(Bitmap& newState) {
   float score = 0.0;
 
-  float params[] = {20, 1, 1, 1, 1, 1};
+  float params[] = {20, 1, 1, 1, 1, 1, 0};
 
   score += params[0]*count_holes(newState);
-  //score += params[1]*altitude(newState);
-  //score += params[2]*full_cells(newState);
-  //score += params[3]*higher_slope(newState);
-  //score += params[4]*roughness(newState);
-  //score += params[5]*full_cells_weighted(newState);
+  score += params[1]*altitude(newState);
+  score += params[2]*full_cells(newState);
+  score += params[3]*higher_slope(newState);
+  score += params[4]*roughness(newState);
+  score += params[5]*full_cells_weighted(newState);
+  score += params[6]*countComponents(newState);
   return score;
 }
 
@@ -666,8 +717,8 @@ int test ()
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
-            {0, 0, 0, 4, 0, 2, 2, 0, 0, 0, 0, 9},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
+            {1, 1, 0, 4, 0, 2, 2, 0, 0, 0, 0, 9},
+            {0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
      };
      cout << Board::count_holes (bitmap) << endl;
      cout << Board::altitude (bitmap) << endl;
@@ -675,6 +726,9 @@ int test ()
      cout << Board::higher_slope (bitmap) << endl;
      cout << Board::roughness (bitmap) << endl;
      cout << Board::full_cells_weighted (bitmap) << endl;
+     cout << Board::countComponents (bitmap) << endl;
+
+     return 0;
 }
 
 int main(int argc, char** argv) {
