@@ -277,6 +277,62 @@ void Board::remove_rows(Bitmap* new_bitmap) {
   }
 }
 
+int Board::heuristic1 (Bitmap &newState) {
+  int res = 0;
+  for (int i = ROWS - 1; i >= 0; i++) {
+    bool success = false;
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j]) {
+        success = true;
+        break;
+      }
+    }
+
+    if (success) {
+      res = i + 1;
+    } else {
+      break;
+    }
+  }
+  return res;
+}
+
+int Board::heuristic2 (Bitmap &newState) {
+  int res = 0;
+  bool visited[ROWS][COLS];
+  memset(visited, 0, sizeof visited);
+
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if(newState[i][j]) {
+        if ( (j - 1) >= 0 && !visited[i][j - 1] && !newState[i][j - 1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j - 1]) {
+            visited[height][j - 1] = true;
+            temp++;
+            height ++;
+          }
+          res += temp;
+        }
+
+        if ( (j + 1) < COLS && !visited[i][j+1] && !newState[i][j+1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j + 1]) {
+            visited[height][j + 1] = true;
+            temp ++;
+            height ++;
+          }
+
+          res += temp;
+        }
+      }
+    }
+  }
+  return res;
+}
+
 int main(int argc, char** argv) {
   // Construct a JSON Object with the given game state.
   istringstream raw_state(argv[1]);
