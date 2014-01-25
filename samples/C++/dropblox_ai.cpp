@@ -423,39 +423,59 @@ int Board::altitude(Bitmap &newState) {
 }
 
 int Board::roughness(Bitmap &newState) {
-  int res = 0;
-  bool visited[ROWS][COLS];
-  memset(visited, 0, sizeof visited);
+     int row, col, has_ceiling = 0;
+     unsigned int sum_height = 0;
+  
+     for (col = 0; col < COLS; col++) {
+          for (row = 0; row < ROWS; row++) {
+               if (newState[row][col] != 0) {
+                    unsigned int height_left = 0;
+                    unsigned int height_right = 0;
 
-  for (int i = 0; i < ROWS; i++) {
-    for (int j = 0; j < COLS; j++) {
-      if(newState[i][j]) {
-        if ( (j - 1) >= 0 && !visited[i][j - 1] && !newState[i][j - 1]) {
-          int height = i;
-          int temp = 0;
-          while (height < ROWS && !newState[height][j - 1]) {
-            visited[height][j - 1] = true;
-            temp++;
-            height ++;
+                    // No ceiling on left
+                    int row_iter = row;
+                    if (col-1 >= 0) {
+                         has_ceiling = 0;
+                         for (int i = row_iter - 1; i >= 0; i--) {
+                              if (newState[i][col-1] != 0) {
+                                   has_ceiling = 1;
+                                   break;
+                              }
+                         }
+                    
+                         if (! has_ceiling) {
+                              while (row_iter < ROWS &&
+                                     newState[row_iter++][col-1] == 0) {
+                                   height_left++;
+                              }
+                         }
+                    }
+                    
+                    
+
+                    if (col+1 < COLS) {
+                         row_iter = row;
+                         has_ceiling = 0;
+                         for (int i = row_iter - 1; i >= 0; i--) {
+                              if (newState[i][col+1] != 0) {
+                                   has_ceiling = 1;
+                                   break;
+                              }
+                         }
+                         if (! has_ceiling) {
+                              while (row_iter < ROWS &&
+                                     newState[row_iter++][col+1] == 0) {
+                                   height_right++;
+                              }
+                         }
+                    }
+                    
+                    sum_height += (height_right + height_left);
+                    break;
+               }
           }
-          res += temp;
-        }
-
-        if ( (j + 1) < COLS && !visited[i][j+1] && !newState[i][j+1]) {
-          int height = i;
-          int temp = 0;
-          while (height < ROWS && !newState[height][j + 1]) {
-            visited[height][j + 1] = true;
-            temp ++;
-            height ++;
-          }
-
-          res += temp;
-        }
-      }
-    }
-  }
-  return res;
+     }
+     return sum_height;
 }
 
 int Board::full_cells(Bitmap& newState) {
@@ -468,35 +488,64 @@ int Board::full_cells(Bitmap& newState) {
   return count;
 }
 
-int Board::higher_slope(Bitmap& newState) {  int row, col, has_ceiling;
-  unsigned int max_height = 0;
+int Board::higher_slope(Bitmap& newState)
+{
+     int row, col, has_ceiling = 0;
+     unsigned int max_height = 0;
   
-  for (col = 0; col < COLS; col++) {
-    for (row = 0; row < ROWS; row++) {
-      if (newState[row][col] != 0) {
-           unsigned int height_left = 0;
-           unsigned int height_right = 0;
-           int row_iter = row;
-           while (col-1 >= 0 &&
-                  row_iter < ROWS &&
-                  newState[row_iter++][col-1] == 0) {
-                height_left++;
-           }
+     for (col = 0; col < COLS; col++) {
+          for (row = 0; row < ROWS; row++) {
+               if (newState[row][col] != 0) {
+                    unsigned int height_left = 0;
+                    unsigned int height_right = 0;
 
-           row_iter = row;
-           while (col+1 < COLS &&
-                  row_iter < ROWS &&
-                  newState[row_iter++][col+1] == 0) {
-                height_right++;
-           }
+                    // No ceiling on left
+                    int row_iter = row;
+                    if (col-1 >= 0) {
+                         has_ceiling = 0;
+                         for (int i = row_iter - 1; i >= 0; i--) {
+                              if (newState[i][col-1] != 0) {
+                                   has_ceiling = 1;
+                                   break;
+                              }
+                         }
+                    
+                         if (! has_ceiling) {
+                              while (row_iter < ROWS &&
+                                     newState[row_iter++][col-1] == 0) {
+                                   height_left++;
+                              }
+                         }
+                    }
+                    
+                    
+
+                    if (col+1 < COLS) {
+                         row_iter = row;
+                         has_ceiling = 0;
+                         for (int i = row_iter - 1; i >= 0; i--) {
+                              if (newState[i][col+1] != 0) {
+                                   has_ceiling = 1;
+                                   break;
+                              }
+                         }
+                         if (! has_ceiling) {
+                              while (row_iter < ROWS &&
+                                     newState[row_iter++][col+1] == 0) {
+                                   height_right++;
+                              }
+                         }
+                    }
+                    
+                    
            
-           max_height = max (max_height, height_right);
-           max_height = max (max_height, height_left);
-           break;
-      }
-    }
-  }
-  return max_height;
+                    max_height = max (max_height, height_right);
+                    max_height = max (max_height, height_left);
+                    break;
+               }
+          }
+     }
+     return max_height;
 }
 
 int Board::full_cells_weighted(Bitmap& newState) {
@@ -545,20 +594,20 @@ int test ()
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 8},
-            {0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 8},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
             {0, 0, 0, 4, 0, 2, 2, 0, 0, 0, 0, 9},
-            {5, 5, 5, 3, 3, 2, 2, 2, 2, 1, 8, 0}
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8},
      };
-     // cout << Board::count_holes (bitmap) << endl;
-     // cout << Board::altitude (bitmap) << endl;
-     // cout << Board::full_cells (bitmap) << endl;
+     cout << Board::count_holes (bitmap) << endl;
+     cout << Board::altitude (bitmap) << endl;
+     cout << Board::full_cells (bitmap) << endl;
      cout << Board::higher_slope (bitmap) << endl;
      cout << Board::roughness (bitmap) << endl;
      cout << Board::full_cells_weighted (bitmap) << endl;
