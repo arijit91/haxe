@@ -3,6 +3,7 @@
 #include<vector>
 #include<cstring>
 #include <string.h>
+#include <algorithm>
 
 #include "dropblox_ai.h"
 
@@ -451,7 +452,7 @@ int Board::count_holes(Bitmap& newState)
          (has_ceiling == 1)) {
           hole_count++;
       }
-      if (newState[row][col] == 1) {
+      if (newState[row][col] != 0) {
           has_ceiling = 1;
       }
     }
@@ -461,7 +462,7 @@ int Board::count_holes(Bitmap& newState)
 
 int Board::altitude(Bitmap &newState) {
   int res = 0;
-  for (int i = ROWS - 1; i >= 0; i++) {
+  for (int i = ROWS - 1; i >= 0; i--){
     bool success = false;
     for (int j = 0; j < COLS; j++) {
       if (newState[i][j]) {
@@ -471,7 +472,7 @@ int Board::altitude(Bitmap &newState) {
     }
 
     if (success) {
-      res = i + 1;
+         res++;
     } else {
       break;
     }
@@ -525,20 +526,35 @@ int Board::full_cells(Bitmap& newState) {
   return count;
 }
 
-int Board::higher_slope(Bitmap& newState) {
-  int count = 0;
-  for (int i = ROWS-1; i >= 0; i--) {
-    int flag = 0;
-    for (int j = 0; j < COLS; j++) {
-      if (newState[i][j] != 0) {
-        flag = 1;
-        break;
+int Board::higher_slope(Bitmap& newState) {  int row, col, has_ceiling;
+  unsigned int max_height = 0;
+  
+  for (col = 0; col < COLS; col++) {
+    for (row = 0; row < ROWS; row++) {
+      if (newState[row][col] != 0) {
+           unsigned int height_left = 0;
+           unsigned int height_right = 0;
+           int row_iter = row;
+           while (col-1 >= 0 &&
+                  row_iter < ROWS &&
+                  newState[row_iter++][col-1] == 0) {
+                height_left++;
+           }
+
+           row_iter = row;
+           while (col+1 < COLS &&
+                  row_iter < ROWS &&
+                  newState[row_iter++][col+1] == 0) {
+                height_right++;
+           }
+           
+           max_height = max (max_height, height_right);
+           max_height = max (max_height, height_left);
+           break;
       }
     }
-    if (!flag) break;
-    count++;
   }
-  return count;
+  return max_height;
 }
 
 int Board::full_cells_weighted(Bitmap& newState) {
@@ -562,7 +578,54 @@ float Board::get_score(Bitmap& newState) {
   return score;
 }
 
+int test () 
+{Bitmap bitmap = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 8},
+            {0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 8},
+            {0, 0, 0, 4, 0, 2, 2, 0, 0, 0, 0, 9},
+            {5, 5, 5, 3, 3, 2, 2, 2, 2, 1, 8, 0}
+     };
+     // cout << Board::count_holes (bitmap) << endl;
+     // cout << Board::altitude (bitmap) << endl;
+     // cout << Board::full_cells (bitmap) << endl;
+     cout << Board::higher_slope (bitmap) << endl;
+     cout << Board::roughness (bitmap) << endl;
+     cout << Board::full_cells_weighted (bitmap) << endl;
+}
+
 int main(int argc, char** argv) {
+     // test ();
+     // return 0;
+
   // Construct a JSON Object with the given game state.
   istringstream raw_state(argv[1]);
   Object state;
