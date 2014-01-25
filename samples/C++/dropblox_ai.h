@@ -126,6 +126,8 @@ class Board {
   // h5 = the number of full cells in the playfield weighted by their altitude
   static int full_cells_weighted(Bitmap& newState);
 
+  static int countComponents(Bitmap &newState);
+
   float get_score(Bitmap& newState);
 
   // A static method that takes in a new_bitmap and removes any full rows from it.
