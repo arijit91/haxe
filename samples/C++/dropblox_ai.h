@@ -13,6 +13,16 @@ using namespace std;
 
 typedef int Bitmap[ROWS][COLS];
 
+struct posn {
+  int tx;
+  int ty;
+  int rot;
+
+  posn(int a, int b, int c) {
+    tx = a; ty = b; rot = c;
+  }
+};
+
 class Board;
 
 class Point {
@@ -57,6 +67,8 @@ class Block {
   void do_command(const string& command);
   void do_commands(const vector<string>& commands);
 
+  void set_position(int, int, int);
+  void set_position(posn);
   void reset_position();
 
  private:
@@ -99,6 +111,8 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
+  void generate_moves();
+  void choose_move();
   // h0 = the number of holes in the playfield
   static int count_holes(Bitmap& newState);
   // h1 = height of the higest point

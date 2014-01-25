@@ -1,3 +1,7 @@
+#include<map>
+#include<queue>
+#include<vector>
+#include<cstring>
 #include <string.h>
 #include <algorithm>
 
@@ -5,6 +9,8 @@
 
 using namespace json;
 using namespace std;
+
+#define INF 1000000000
 
 //----------------------------------
 // Block implementation starts here!
@@ -129,6 +135,18 @@ void Block::reset_position() {
   translation.i = 0;
   translation.j = 0;
   rotation = 0;
+}
+
+void Block::set_position(posn pos) {
+  translation.i = pos.tx;
+  translation.j = pos.ty;
+  rotation = pos.rot;
+}
+
+void Block::set_position(int a, int b, int c) {
+  translation.i = a;
+  translation.j = b;
+  rotation = c;
 }
 
 //----------------------------------
@@ -284,6 +302,83 @@ void Board::remove_rows(Bitmap* new_bitmap) {
       (*new_bitmap)[i][j] = 0;
     }
   }
+}
+
+
+bool operator<(const posn& a, const posn& b) {
+  if (a.tx != b.tx) return (a.tx < b.tx);
+  if (a.ty != b.ty) return (a.ty < b.ty);
+  return (a.rot < b.rot);
+}
+
+map<posn, vector<string> > commands;
+
+vector<pair<vector<string>, Board*> > valid_moves;
+
+void Board::generate_moves() {
+  vector<string> empty;
+  queue<int> Q;
+  int vis[ROWS][COLS][4];
+
+  int tx, ty, rot;
+  tx = ty = rot = 0;
+
+  memset(vis, -1, sizeof(vis));
+
+  Q.push(tx); Q.push(ty); Q.push(rot);
+
+  posn pos(tx, ty, rot);
+  commands[pos] = empty;
+
+  vis[tx][ty][rot] = 1;
+
+  while (!Q.empty()) {
+    tx = Q.front(); Q.pop();
+    ty = Q.front(); Q.pop();
+    rot = Q.front(); Q.pop();
+   
+    posn pos(tx, ty, rot);
+    vector<string> cmd = commands[pos];
+
+    block->set_position(tx, ty, rot);
+    ty += 1;
+    block->right();
+    cmd.push_back("right");
+    if (check(*block) && vis[tx][ty][rot] == 0) {
+      vis[tx][ty][rot] = 1;
+      //commands[posn(tx, ty, rot)] = cmd;
+      Q.push(tx); Q.push(ty); Q.push(rot);
+    }
+  }
+
+  block->reset_position();
+}
+
+void print_moves(vector<string>& moves) {
+  for (int i = 0; i < moves.size(); i++)
+    cout<<moves[i]<<endl;
+}
+
+void Board::choose_move() {
+  vector<string> best;
+  float min_score = INF;
+  for (map<posn, vector<string> >::iterator it = commands.begin();
+    it != commands.end(); it++) {
+    posn pos = it -> first;
+
+    vector<string> moves = it -> second;
+
+    block->set_position(pos);
+    place();
+
+    float score = get_score(bitmap);
+    if (score < min_score) {
+      min_score = score;
+      best = moves;
+    }
+  }
+
+  print_moves(best);
 }
 
 int Board::count_holes(Bitmap& newState) 
@@ -481,15 +576,18 @@ int main(int argc, char** argv) {
   // Construct a board from this Object.
   Board board(state);
 
-  // Make some moves!
-  vector<string> moves;
-  while (board.check(*board.block)) {
-    board.block->left();
-    moves.push_back("left");
-  }
-  // Ignore the last move, because it moved the block into invalid
-  // position. Make all the rest.
-  for (int i = 0; i < moves.size() - 1; i++) {
-    cout << moves[i] << endl;
-  }
+  board.generate_moves();
+  board.choose_move();
+
+  // // Make some moves!
+  // vector<string> moves;
+  // while (board.check(*board.block)) {
+  //   board.block->left();
+  //   moves.push_back("left");
+  // }
+  // // Ignore the last move, because it moved the block into invalid
+  // // position. Make all the rest.
+  // for (int i = 0; i < moves.size() - 1; i++) {
+  //   cout << moves[i] << endl;
+  // }
 }
