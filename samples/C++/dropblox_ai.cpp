@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "dropblox_ai.h"
 
 using namespace json;
