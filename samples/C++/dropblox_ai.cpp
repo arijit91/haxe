@@ -9,6 +9,8 @@
 using namespace json;
 using namespace std;
 
+#define INF 1000000000
+
 //----------------------------------
 // Block implementation starts here!
 //----------------------------------
@@ -132,6 +134,12 @@ void Block::reset_position() {
   translation.i = 0;
   translation.j = 0;
   rotation = 0;
+}
+
+void Block::set_position(posn pos) {
+  translation.i = pos.tx;
+  translation.j = pos.ty;
+  rotation = pos.rot;
 }
 
 void Block::set_position(int a, int b, int c) {
@@ -295,15 +303,6 @@ void Board::remove_rows(Bitmap* new_bitmap) {
   }
 }
 
-struct posn {
-  int tx;
-  int ty;
-  int rot;
-
-  posn(int a, int b, int c) {
-    tx = a; ty = b; rot = c;
-  }
-};
 
 bool operator<(const posn& a, const posn& b) {
   if (a.tx != b.tx) return (a.tx < b.tx);
@@ -354,13 +353,33 @@ void Board::generate_moves() {
   block->reset_position();
 }
 
+void print_moves(vector<string>& moves) {
+  for (int i = 0; i < moves.size(); i++)
+    cout<<moves[i]<<endl;
+}
+
 void Board::choose_move() {
-  //vector<string> best;
-  //for (map<posn, vector<string> >::iterator it = commands.begin();
-  //  it != commands.end(); it++) {
-  //  posn pos = it -> first;
-  //  vector<string> commands = it -> second;
-  //}
+  vector<string> best;
+  float min_score = INF;
+  for (map<posn, vector<string> >::iterator it = commands.begin();
+    it != commands.end(); it++) {
+    posn pos = it -> first;
+
+    vector<string> moves = it -> second;
+
+    block->set_position(pos);
+    place();
+
+    float score = get_score(bitmap);
+    if (score < min_score) {
+      min_score = score;
+      best = moves;
+    }
+  }
+
+  print_moves(best);
+}
+
 int Board::count_holes(Bitmap& newState) 
 {
   // A cell is a hole if it is empty but somewhere above it, there is

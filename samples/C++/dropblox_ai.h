@@ -13,6 +13,16 @@ using namespace std;
 
 typedef int Bitmap[ROWS][COLS];
 
+struct posn {
+  int tx;
+  int ty;
+  int rot;
+
+  posn(int a, int b, int c) {
+    tx = a; ty = b; rot = c;
+  }
+};
+
 class Board;
 
 class Point {
@@ -58,6 +68,7 @@ class Block {
   void do_commands(const vector<string>& commands);
 
   void set_position(int, int, int);
+  void set_position(posn);
   void reset_position();
 
  private:
