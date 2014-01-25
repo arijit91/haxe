@@ -97,6 +97,14 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
+
+  // h2 = the number of full cells in the playfield
+  int full_cells();
+  // h3 = the value of the higher slope in the playfield
+  int higher_slope();
+  // h5 = the number of full cells in the playfield weighted by their altitude
+  int full_cells();
+
   // A static method that takes in a new_bitmap and removes any full rows from it.
   // Mutates the new_bitmap in place.
   static void remove_rows(Bitmap* new_bitmap);
