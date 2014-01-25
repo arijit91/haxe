@@ -1,0 +1,117 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Array	json/elements.h	/^class Array$/;"	c	namespace:json
+Bitmap	dropblox_ai.h	/^typedef int Bitmap[ROWS][COLS];$/;"	t
+Block	dropblox_ai.cpp	/^Block::Block(Object& raw_block) {$/;"	f	class:Block
+Block	dropblox_ai.h	/^class Block {$/;"	c
+Board	dropblox_ai.cpp	/^Board::Board() {$/;"	f	class:Board
+Board	dropblox_ai.cpp	/^Board::Board(Object& state) {$/;"	f	class:Board
+Board	dropblox_ai.h	/^class Board {$/;"	c
+Boolean	json/elements.h	/^typedef TrivialType_T<bool> Boolean;$/;"	t	namespace:json
+COLS	dropblox_ai.h	11;"	d
+ConstVisitor	json/visitor.h	/^class ConstVisitor$/;"	c	namespace:json
+ENGINEERING	json/elements.h	/^   enum {ENGINEERING = 2 };$/;"	e	enum:json::Version::__anon3
+EXE_NAME	Makefile	/^EXE_NAME = .\/dropblox_ai$/;"	m
+Elements	json/elements.h	/^   typedef std::deque<UnknownElement> Elements;$/;"	t	class:json::Array
+Exception	json/elements.h	/^class Exception : public std::runtime_error$/;"	c	namespace:json
+Location	json/reader.h	/^   struct Location$/;"	s	class:json::Reader
+MAJOR	json/elements.h	/^   enum { MAJOR = 2 };$/;"	e	enum:json::Version::__anon1
+MINOR	json/elements.h	/^   enum { MINOR = 0 };$/;"	e	enum:json::Version::__anon2
+Member	json/elements.h	/^   struct Member {$/;"	s	class:json::Object
+Members	json/elements.h	/^   typedef std::list<Member> Members; \/\/ map faster, but does not preserve order$/;"	t	class:json::Object
+Null	json/elements.h	/^class Null$/;"	c	namespace:json
+Number	json/elements.h	/^typedef TrivialType_T<double> Number;$/;"	t	namespace:json
+Object	json/elements.h	/^class Object$/;"	c	namespace:json
+PREVIEW_SIZE	dropblox_ai.h	12;"	d
+ParseException	json/reader.h	/^      ParseException(const std::string& sMessage, const Reader::Location& locTokenBegin, const Reader::Location& locTokenEnd) :$/;"	f	class:json::Reader::ParseException
+ParseException	json/reader.h	/^   class ParseException : public Exception$/;"	c	class:json::Reader
+Point	dropblox_ai.h	/^class Point {$/;"	c
+ROWS	dropblox_ai.h	10;"	d
+Reader	json/reader.h	/^class Reader$/;"	c	namespace:json
+ScanException	json/reader.h	/^      ScanException(const std::string& sMessage, const Reader::Location& locError) :$/;"	f	class:json::Reader::ScanException
+ScanException	json/reader.h	/^   class ScanException : public Exception$/;"	c	class:json::Reader
+String	json/elements.h	/^typedef TrivialType_T<std::string> String;$/;"	t	namespace:json
+TOKEN_ARRAY_BEGIN	json/reader.h	/^         TOKEN_ARRAY_BEGIN,   \/\/    [$/;"	e	enum:json::Reader::Token::Type
+TOKEN_ARRAY_END	json/reader.h	/^         TOKEN_ARRAY_END,     \/\/    ]$/;"	e	enum:json::Reader::Token::Type
+TOKEN_BOOLEAN	json/reader.h	/^         TOKEN_BOOLEAN,       \/\/    true -or- false$/;"	e	enum:json::Reader::Token::Type
+TOKEN_MEMBER_ASSIGN	json/reader.h	/^         TOKEN_MEMBER_ASSIGN, \/\/    :$/;"	e	enum:json::Reader::Token::Type
+TOKEN_NEXT_ELEMENT	json/reader.h	/^         TOKEN_NEXT_ELEMENT,  \/\/    ,$/;"	e	enum:json::Reader::Token::Type
+TOKEN_NULL	json/reader.h	/^         TOKEN_NULL,          \/\/    null$/;"	e	enum:json::Reader::Token::Type
+TOKEN_NUMBER	json/reader.h	/^         TOKEN_NUMBER,        \/\/    [+\/-]000.000[e[+\/-]000]$/;"	e	enum:json::Reader::Token::Type
+TOKEN_OBJECT_BEGIN	json/reader.h	/^         TOKEN_OBJECT_BEGIN,  \/\/    {$/;"	e	enum:json::Reader::Token::Type
+TOKEN_OBJECT_END	json/reader.h	/^         TOKEN_OBJECT_END,    \/\/    }$/;"	e	enum:json::Reader::Token::Type
+TOKEN_STRING	json/reader.h	/^         TOKEN_STRING,        \/\/    "xxx"$/;"	e	enum:json::Reader::Token::Type
+Token	json/reader.h	/^   struct Token$/;"	s	class:json::Reader
+Tokens	json/reader.h	/^   typedef std::vector<Token> Tokens;$/;"	t	class:json::Reader
+TrivialType_T	json/elements.h	/^class TrivialType_T$/;"	c	namespace:json
+Type	json/reader.h	/^      enum Type$/;"	g	struct:json::Reader::Token
+UnknownElement	json/elements.h	/^class UnknownElement$/;"	c	namespace:json
+Version	json/elements.h	/^namespace Version$/;"	n	namespace:json
+Visitor	json/visitor.h	/^class Visitor$/;"	c	namespace:json
+Writer	json/writer.h	/^class Writer : private ConstVisitor$/;"	c	namespace:json
+bitmap	dropblox_ai.h	/^  Bitmap bitmap;$/;"	m	class:Board
+block	dropblox_ai.h	/^  Block* block;$/;"	m	class:Board
+center	dropblox_ai.h	/^  Point center;$/;"	m	class:Block
+check	dropblox_ai.cpp	/^bool Board::check(const Block& query) const {$/;"	f	class:Board
+checked_down	dropblox_ai.cpp	/^bool Block::checked_down(const Board& board) {$/;"	f	class:Block
+checked_left	dropblox_ai.cpp	/^bool Block::checked_left(const Board& board) {$/;"	f	class:Block
+checked_right	dropblox_ai.cpp	/^bool Block::checked_right(const Board& board) {$/;"	f	class:Block
+checked_rotate	dropblox_ai.cpp	/^bool Block::checked_rotate(const Board& board) {$/;"	f	class:Block
+checked_up	dropblox_ai.cpp	/^bool Block::checked_up(const Board& board) {$/;"	f	class:Block
+choose_move	dropblox_ai.cpp	/^void Board::choose_move() {$/;"	f	class:Board
+cols	dropblox_ai.h	/^  int cols;$/;"	m	class:Board
+const_iterator	json/elements.h	/^   typedef Elements::const_iterator const_iterator;$/;"	t	class:json::Array
+const_iterator	json/elements.h	/^   typedef Members::const_iterator const_iterator;$/;"	t	class:json::Object
+do_command	dropblox_ai.cpp	/^void Block::do_command(const string& command) {$/;"	f	class:Block
+do_commands	dropblox_ai.cpp	/^Board* Board::do_commands(const vector<string>& commands) {$/;"	f	class:Board
+do_commands	dropblox_ai.cpp	/^void Block::do_commands(const vector<string>& commands) {$/;"	f	class:Block
+down	dropblox_ai.cpp	/^void Block::down() {$/;"	f	class:Block
+element	json/elements.h	/^      UnknownElement element;$/;"	m	struct:json::Object::Member
+generate_moves	dropblox_ai.cpp	/^void Board::generate_moves() {$/;"	f	class:Board
+i	dropblox_ai.h	/^  int i;$/;"	m	class:Point
+iterator	json/elements.h	/^   typedef Elements::iterator iterator;$/;"	t	class:json::Array
+iterator	json/elements.h	/^   typedef Members::iterator iterator;$/;"	t	class:json::Object
+j	dropblox_ai.h	/^  int j;$/;"	m	class:Point
+json	json/elements.h	/^namespace json$/;"	n
+json	json/reader.h	/^namespace json$/;"	n
+json	json/visitor.h	/^namespace json$/;"	n
+json	json/writer.h	/^namespace json$/;"	n
+left	dropblox_ai.cpp	/^void Block::left() {$/;"	f	class:Block
+locBegin	json/reader.h	/^      Reader::Location locBegin;$/;"	m	struct:json::Reader::Token
+locEnd	json/reader.h	/^      Reader::Location locEnd;$/;"	m	struct:json::Reader::Token
+m_Elements	json/elements.h	/^   Elements m_Elements;$/;"	m	class:json::Array
+m_Members	json/elements.h	/^   Members m_Members;$/;"	m	class:json::Object
+m_locError	json/reader.h	/^      Reader::Location m_locError;$/;"	m	class:json::Reader::ScanException
+m_locTokenBegin	json/reader.h	/^      Reader::Location m_locTokenBegin;$/;"	m	class:json::Reader::ParseException
+m_locTokenEnd	json/reader.h	/^      Reader::Location m_locTokenEnd;$/;"	m	class:json::Reader::ParseException
+m_nDocOffset	json/reader.h	/^      unsigned int m_nDocOffset;  \/\/ character offset from entire document, zero indexed$/;"	m	struct:json::Reader::Location
+m_nLine	json/reader.h	/^      unsigned int m_nLine;       \/\/ document line, zero-indexed$/;"	m	struct:json::Reader::Location
+m_nLineOffset	json/reader.h	/^      unsigned int m_nLineOffset; \/\/ character offset from beginning of line, zero indexed$/;"	m	struct:json::Reader::Location
+m_nTabDepth	json/writer.h	/^   int m_nTabDepth;$/;"	m	class:json::Writer
+m_ostr	json/writer.h	/^   std::ostream& m_ostr;$/;"	m	class:json::Writer
+m_pImp	json/elements.h	/^   Imp* m_pImp;$/;"	m	class:json::UnknownElement
+m_tValue	json/elements.h	/^   DataTypeT m_tValue;$/;"	m	class:json::TrivialType_T
+main	dropblox_ai.cpp	/^int main(int argc, char** argv) {$/;"	f
+nType	json/reader.h	/^      Type nType;$/;"	m	struct:json::Reader::Token
+name	json/elements.h	/^      std::string name;$/;"	m	struct:json::Object::Member
+offsets	dropblox_ai.h	/^  Point offsets[10];$/;"	m	class:Block
+place	dropblox_ai.cpp	/^Board* Board::place() {$/;"	f	class:Board
+preview	dropblox_ai.h	/^  vector<Block*> preview;$/;"	m	class:Board
+remove_rows	dropblox_ai.cpp	/^void Board::remove_rows(Bitmap* new_bitmap) {$/;"	f	class:Board
+reset_position	dropblox_ai.cpp	/^void Block::reset_position() {$/;"	f	class:Block
+right	dropblox_ai.cpp	/^void Block::right() {$/;"	f	class:Block
+rotate	dropblox_ai.cpp	/^void Block::rotate() {$/;"	f	class:Block
+rotation	dropblox_ai.h	/^  int rotation;$/;"	m	class:Block
+rows	dropblox_ai.h	/^  int rows;$/;"	m	class:Board
+sValue	json/reader.h	/^      std::string sValue;$/;"	m	struct:json::Reader::Token
+size	dropblox_ai.h	/^  int size;$/;"	m	class:Block
+translation	dropblox_ai.h	/^  Point translation;$/;"	m	class:Block
+unrotate	dropblox_ai.cpp	/^void Block::unrotate() {$/;"	f	class:Block
+up	dropblox_ai.cpp	/^void Block::up() {$/;"	f	class:Block
+valid_moves	dropblox_ai.cpp	/^vector<pair<vector<string>, Board*> > valid_moves;$/;"	v
+~ConstVisitor	json/visitor.h	/^   virtual ~ConstVisitor() {}$/;"	f	class:json::ConstVisitor
+~Visitor	json/visitor.h	/^   virtual ~Visitor() {}$/;"	f	class:json::Visitor

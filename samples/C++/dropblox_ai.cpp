@@ -2,6 +2,8 @@
 #include<queue>
 #include<vector>
 #include<cstring>
+#include <string.h>
+
 #include "dropblox_ai.h"
 
 using namespace json;
@@ -145,11 +147,17 @@ void Block::set_position(int a, int b, int c) {
 Board::Board() {
   rows = ROWS;
   cols = COLS;
+
+  heuristic_params[0] = 1.0;
+  heuristic_params[1] = 1.0;
+  heuristic_params[2] = 1.0;
+  heuristic_params[3] = 1.0;
+  heuristic_params[4] = 1.0;
+  heuristic_params[5] = 1.0;
 }
 
 Board::Board(Object& state) {
-  rows = ROWS;
-  cols = COLS;
+  Board();
 
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -353,6 +361,128 @@ void Board::choose_move() {
   //  posn pos = it -> first;
   //  vector<string> commands = it -> second;
   //}
+int Board::count_holes(Bitmap& newState) 
+{
+  // A cell is a hole if it is empty but somewhere above it, there is
+  // block or part of a block.
+  int row, col, has_ceiling;
+  unsigned int hole_count = 0;
+  for (col = 0; col < COLS; col++) {
+    has_ceiling = 0;
+    for (row = 0; row < ROWS; row++) {
+      if ((newState[row][col] == 0) &&
+         (has_ceiling == 1)) {
+          hole_count++;
+      }
+      if (newState[row][col] == 1) {
+          has_ceiling = 1;
+      }
+    }
+  }
+  return hole_count;
+}
+
+int Board::altitude(Bitmap &newState) {
+  int res = 0;
+  for (int i = ROWS - 1; i >= 0; i++) {
+    bool success = false;
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j]) {
+        success = true;
+        break;
+      }
+    }
+
+    if (success) {
+      res = i + 1;
+    } else {
+      break;
+    }
+  }
+  return res;
+}
+
+int Board::roughness(Bitmap &newState) {
+  int res = 0;
+  bool visited[ROWS][COLS];
+  memset(visited, 0, sizeof visited);
+
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if(newState[i][j]) {
+        if ( (j - 1) >= 0 && !visited[i][j - 1] && !newState[i][j - 1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j - 1]) {
+            visited[height][j - 1] = true;
+            temp++;
+            height ++;
+          }
+          res += temp;
+        }
+
+        if ( (j + 1) < COLS && !visited[i][j+1] && !newState[i][j+1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j + 1]) {
+            visited[height][j + 1] = true;
+            temp ++;
+            height ++;
+          }
+
+          res += temp;
+        }
+      }
+    }
+  }
+  return res;
+}
+
+int Board::full_cells(Bitmap& newState) {
+  int count = 0;
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) count++;
+    }
+  }
+  return count;
+}
+
+int Board::higher_slope(Bitmap& newState) {
+  int count = 0;
+  for (int i = ROWS-1; i >= 0; i--) {
+    int flag = 0;
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) {
+        flag = 1;
+        break;
+      }
+    }
+    if (!flag) break;
+    count++;
+  }
+  return count;
+}
+
+int Board::full_cells_weighted(Bitmap& newState) {
+  int count = 0;
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) count += ROWS-i;
+    }
+  }
+  return count;
+}
+
+float Board::get_score(Bitmap& newState) {
+  float score = 0.0;
+  score += heuristic_params[0]*count_holes(newState);
+  score += heuristic_params[1]*altitude(newState);
+  score += heuristic_params[2]*full_cells(newState);
+  score += heuristic_params[3]*higher_slope(newState);
+  score += heuristic_params[4]*roughness(newState);
+  score += heuristic_params[5]*full_cells_weighted(newState);
+  return score;
 }
 
 int main(int argc, char** argv) {
