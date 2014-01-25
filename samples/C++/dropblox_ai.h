@@ -57,6 +57,7 @@ class Block {
   void do_command(const string& command);
   void do_commands(const vector<string>& commands);
 
+  void set_position(int, int, int);
   void reset_position();
 
  private:
@@ -96,6 +97,9 @@ class Board {
   // If there are no blocks left in the preview list, this method will fail badly!
   // This is okay because we don't expect to look ahead that far.
   Board* place();
+
+  void generate_moves();
+  void choose_move();
 
   // A static method that takes in a new_bitmap and removes any full rows from it.
   // Mutates the new_bitmap in place.
