@@ -156,12 +156,12 @@ Board::Board() {
   rows = ROWS;
   cols = COLS;
 
-  heuristic_params[0] = 1.0;
-  heuristic_params[1] = 1.0;
-  heuristic_params[2] = 1.0;
-  heuristic_params[3] = 1.0;
-  heuristic_params[4] = 1.0;
-  heuristic_params[5] = 1.0;
+  heuristic_params[0] = .0;
+  heuristic_params[1] = .0;
+  heuristic_params[2] = .0;
+  heuristic_params[3] = .0;
+  heuristic_params[4] = .0;
+  heuristic_params[5] = .0;
 }
 
 Board::Board(Object& state) {
@@ -317,7 +317,8 @@ vector<pair<vector<string>, Board*> > valid_moves;
 void Board::generate_moves() {
   vector<string> empty;
   queue<int> Q;
-  int vis[ROWS][COLS][4];
+  int vis[100][100][4];
+  int SHIFT = 50;
 
   int tx, ty, rot;
   tx = ty = rot = 0;
@@ -329,7 +330,7 @@ void Board::generate_moves() {
   posn pos(tx, ty, rot);
   commands[pos] = empty;
 
-  vis[tx][ty][rot] = 1;
+  vis[tx + SHIFT][ty + SHIFT][rot] = 1;
 
   while (!Q.empty()) {
     tx = Q.front(); Q.pop();
@@ -337,15 +338,69 @@ void Board::generate_moves() {
     rot = Q.front(); Q.pop();
    
     posn pos(tx, ty, rot);
-    vector<string> cmd = commands[pos];
+    vector<string> cmd;
 
+    cmd = commands[pos];
+    tx = pos.tx; ty = pos.ty; rot = pos.rot;
     block->set_position(tx, ty, rot);
     ty += 1;
     block->right();
     cmd.push_back("right");
-    if (check(*block) && vis[tx][ty][rot] == 0) {
-      vis[tx][ty][rot] = 1;
-      //commands[posn(tx, ty, rot)] = cmd;
+    if (check(*block) && vis[tx + SHIFT][ty + SHIFT][rot] == -1) {
+      vis[tx+SHIFT][ty+SHIFT][rot] = 1;
+      commands[posn(tx, ty, rot)] = cmd;
+      Q.push(tx); Q.push(ty); Q.push(rot);
+    }
+
+    cmd = commands[pos];
+    tx = pos.tx; ty = pos.ty; rot = pos.rot;
+    block->set_position(tx, ty, rot);
+    ty -= 1;
+    block->left();
+    cmd.push_back("left");
+    if (check(*block) && vis[tx+SHIFT][ty+SHIFT][rot] == -1) {
+
+      vis[tx+SHIFT][ty+SHIFT][rot] = 1;
+      commands[posn(tx, ty, rot)] = cmd;
+      Q.push(tx); Q.push(ty); Q.push(rot);
+    }
+
+    cmd = commands[pos];
+    tx = pos.tx; ty = pos.ty; rot = pos.rot;
+    block->set_position(tx, ty, rot);
+    tx += 1;
+    block->down();
+    cmd.push_back("down");
+    if (check(*block) && vis[tx+SHIFT][ty+SHIFT][rot] == -1) {
+
+      vis[tx+SHIFT][ty+SHIFT][rot] = 1;
+      commands[posn(tx, ty, rot)] = cmd;
+      Q.push(tx); Q.push(ty); Q.push(rot);
+    }
+
+    cmd = commands[pos];
+    tx = pos.tx; ty = pos.ty; rot = pos.rot;
+    block->set_position(tx, ty, rot);
+    tx -= 1;
+    block->up();
+    cmd.push_back("up");
+    if (check(*block) && vis[tx+SHIFT][ty+SHIFT][rot] == -1) {
+
+      vis[tx+SHIFT][ty+SHIFT][rot] = 1;
+      commands[posn(tx, ty, rot)] = cmd;
+      Q.push(tx); Q.push(ty); Q.push(rot);
+    }
+
+    cmd = commands[pos];
+    tx = pos.tx; ty = pos.ty; rot = pos.rot;
+    block->set_position(tx, ty, rot);
+    rot = (rot + 1) % 4;
+    block->rotate();
+    cmd.push_back("rotate");
+    if (check(*block) && vis[tx+SHIFT][ty+SHIFT][rot] == -1) {
+
+      vis[tx+SHIFT][ty+SHIFT][rot] = 1;
+      commands[posn(tx, ty, rot)] = cmd;
       Q.push(tx); Q.push(ty); Q.push(rot);
     }
   }
@@ -365,13 +420,16 @@ void Board::choose_move() {
     it != commands.end(); it++) {
     posn pos = it -> first;
 
+    //cout<<pos.tx<<" "<<pos.ty<<" "<<pos.rot<<endl;
+
     vector<string> moves = it -> second;
+    //cout<<moves.size()<<"\n";
 
     block->set_position(pos);
     place();
 
     float score = get_score(bitmap);
-    if (score < min_score) {
+    if (score <= min_score) {
       min_score = score;
       best = moves;
     }
