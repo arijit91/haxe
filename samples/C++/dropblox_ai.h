@@ -97,6 +97,8 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
+  int count_holes ();
+
   // A static method that takes in a new_bitmap and removes any full rows from it.
   // Mutates the new_bitmap in place.
   static void remove_rows(Bitmap* new_bitmap);
