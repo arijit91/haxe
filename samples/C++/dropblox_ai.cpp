@@ -298,6 +298,41 @@ void Board::remove_rows(Bitmap* new_bitmap) {
   }
 }
 
+int Board::full_cells(Bitmap& newState) {
+  int count = 0;
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) count++;
+    }
+  }
+  return count;
+}
+
+int Board::higher_slope(Bitmap& newState) {
+  int count = 0;
+  for (int i = ROWS-1; i >= 0; i--) {
+    int flag = 0;
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) {
+        flag = 1;
+        break;
+    }
+    if (!flag) break;
+    count++;
+  }
+  return count;
+}
+
+int Board::full_cells_weighted(Bitmap& newState) {
+  int count = 0;
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j] != 0) count += ROWS-i;
+    }
+  }
+  return count;
+}
+
 int main(int argc, char** argv) {
   // Construct a JSON Object with the given game state.
   istringstream raw_state(argv[1]);
