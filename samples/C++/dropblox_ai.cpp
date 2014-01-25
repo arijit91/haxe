@@ -304,6 +304,62 @@ int Board::count_holes(Bitmap& newState)
   return hole_count;
 }
 
+int Board::altitude(Bitmap &newState) {
+  int res = 0;
+  for (int i = ROWS - 1; i >= 0; i++) {
+    bool success = false;
+    for (int j = 0; j < COLS; j++) {
+      if (newState[i][j]) {
+        success = true;
+        break;
+      }
+    }
+
+    if (success) {
+      res = i + 1;
+    } else {
+      break;
+    }
+  }
+  return res;
+}
+
+int Board::roughness(Bitmap &newState) {
+  int res = 0;
+  bool visited[ROWS][COLS];
+  memset(visited, 0, sizeof visited);
+
+  for (int i = 0; i < ROWS; i++) {
+    for (int j = 0; j < COLS; j++) {
+      if(newState[i][j]) {
+        if ( (j - 1) >= 0 && !visited[i][j - 1] && !newState[i][j - 1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j - 1]) {
+            visited[height][j - 1] = true;
+            temp++;
+            height ++;
+          }
+          res += temp;
+        }
+
+        if ( (j + 1) < COLS && !visited[i][j+1] && !newState[i][j+1]) {
+          int height = i;
+          int temp = 0;
+          while (height < ROWS && !newState[height][j + 1]) {
+            visited[height][j + 1] = true;
+            temp ++;
+            height ++;
+          }
+
+          res += temp;
+        }
+      }
+    }
+  }
+  return res;
+}
+
 int Board::full_cells(Bitmap& newState) {
   int count = 0;
   for (int i = 0; i < ROWS; i++) {

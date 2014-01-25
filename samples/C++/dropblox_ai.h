@@ -101,10 +101,14 @@ class Board {
 
   // h0 = the number of holes in the playfield
   int count_holes(Bitmap& newState);
+  // h0 = the number of holes in the playfield
+  int altitude(Bitmap &newState);
   // h2 = the number of full cells in the playfield
   int full_cells(Bitmap& newState);
   // h3 = the value of the higher slope in the playfield
   int higher_slope(Bitmap& newState);
+
+  int roughness(Bitmap &newState);
   // h5 = the number of full cells in the playfield weighted by their altitude
   int full_cells_weighted(Bitmap& newState);
 
