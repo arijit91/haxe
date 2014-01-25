@@ -74,6 +74,9 @@ class Board {
 
   Board(Object& state);
 
+  int heuristic1 (Bitmap &newState);
+  int heuristic2 (Bitmap &newState);
+
   // Returns true if the `query` block is in valid position - that is, if all of
   // its squares are in bounds and are currently unoccupied.
   bool check(const Block& query) const;
