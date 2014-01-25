@@ -99,6 +99,7 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
+  int count_holes ();
 
   // h2 = the number of full cells in the playfield
   int full_cells(Bitmap& newState);
