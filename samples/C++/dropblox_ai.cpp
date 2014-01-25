@@ -135,11 +135,17 @@ void Block::reset_position() {
 Board::Board() {
   rows = ROWS;
   cols = COLS;
+
+  heuristic_params[0] = 1.0;
+  heuristic_params[1] = 1.0;
+  heuristic_params[2] = 1.0;
+  heuristic_params[3] = 1.0;
+  heuristic_params[4] = 1.0;
+  heuristic_params[5] = 1.0;
 }
 
 Board::Board(Object& state) {
-  rows = ROWS;
-  cols = COLS;
+  Board();
 
   for (int i = 0; i < ROWS; i++) {
     for (int j = 0; j < COLS; j++) {
@@ -295,6 +301,7 @@ int Board::higher_slope(Bitmap& newState) {
       if (newState[i][j] != 0) {
         flag = 1;
         break;
+      }
     }
     if (!flag) break;
     count++;
@@ -310,6 +317,17 @@ int Board::full_cells_weighted(Bitmap& newState) {
     }
   }
   return count;
+}
+
+float Board::get_score(Bitmap& newState) {
+  float score = 0.0;
+  score += heuristic_params[0]*holes(newState);
+  score += heuristic_params[1]*altitude(newState);
+  score += heuristic_params[2]*full_cells(newState);
+  score += heuristic_params[3]*higher_slope(newState);
+  score += heuristic_params[4]*roughness(newState);
+  score += heuristic_params[5]*full_cells_weighted(newState);
+  return score;
 }
 
 int main(int argc, char** argv) {

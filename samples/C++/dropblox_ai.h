@@ -74,6 +74,8 @@ class Board {
 
   Board(Object& state);
 
+  float heuristic_params[6];
+
   // Returns true if the `query` block is in valid position - that is, if all of
   // its squares are in bounds and are currently unoccupied.
   bool check(const Block& query) const;
@@ -99,11 +101,13 @@ class Board {
 
 
   // h2 = the number of full cells in the playfield
-  int full_cells();
+  int full_cells(Bitmap& newState);
   // h3 = the value of the higher slope in the playfield
-  int higher_slope();
+  int higher_slope(Bitmap& newState);
   // h5 = the number of full cells in the playfield weighted by their altitude
-  int full_cells();
+  int full_cells_weighted(Bitmap& newState);
+
+  float get_score(Bitmap& newState);
 
   // A static method that takes in a new_bitmap and removes any full rows from it.
   // Mutates the new_bitmap in place.
