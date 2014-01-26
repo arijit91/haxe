@@ -157,14 +157,6 @@ void Block::set_position(int a, int b, int c) {
 Board::Board() {
   rows = ROWS;
   cols = COLS;
-
-  heuristic_params[0] = 20.0;
-  heuristic_params[1] = 1.0;
-  heuristic_params[2] = 1.0;
-  heuristic_params[3] = 1.0;
-  heuristic_params[4] = 1.0;
-  heuristic_params[5] = 1.0;
-  //heuristic_params[6] = .0;
 }
 
 Board::Board(Object& state) {
@@ -313,9 +305,6 @@ bool operator<(const posn& a, const posn& b) {
   return (a.rot < b.rot);
 }
 
-map<posn, vector<string> > commands;
-
-vector<pair<vector<string>, Board*> > valid_moves;
 
 void Board::generate_moves() {
   vector<string> empty;
@@ -410,37 +399,56 @@ void Board::generate_moves() {
   block->reset_position();
 }
 
-void print_moves(vector<string>& moves) {
+void Board::print_moves(vector<string>& moves) {
   for (int i = 0; i < moves.size(); i++)
     cout<<moves[i]<<endl;
 }
 
-void Board::choose_move() {
-  vector<string> best;
-  float min_score = INF;
+
+void Board::choose_move(int depth) {
+  min_score = INF;
+
+  vector<pair<float, posn> > scores;
+
   for (map<posn, vector<string> >::iterator it = commands.begin();
     it != commands.end(); it++) {
     posn pos = it -> first;
-
-
     vector<string> moves = it -> second;
-    //cout<<moves.size()<<"\n";
+
+    if (moves.size() > 0 && (moves.back() == "down" || 
+          moves.back() == "up")) continue;
 
     block->set_position(pos);
     Board* new_board = place();
 
     float score = get_score(new_board->bitmap);
-    assert(score >= 0);
-    if (score <= min_score) {
-      min_score = score;
-      best = moves;
-    }
-    //cout<<"candidate: "<<pos.tx<<" "<<pos.ty<<" "<<pos.rot<<" "<<score<<endl;
+
+    scores.push_back(make_pair(score, pos));
   }
 
-  //cout<<"best: "<<min_score<<endl;
+  sort(scores.begin(), scores.end());
 
-  print_moves(best);
+  if (depth == 0) {
+    best = commands[scores[0].second];
+    this -> min_score = scores[0].first;
+    return ;
+  }
+
+  for (int i = 0; i < scores.size() ; i++) {
+    posn pos = scores[i].second;
+
+    block->set_position(pos);
+    Board* new_board = place();
+
+    new_board->generate_moves();
+    new_board->choose_move(depth - 1);
+
+    if (new_board -> min_score < min_score) {
+      min_score = new_board -> min_score;
+      best = commands[pos];
+    }
+
+  }
 }
 
 int Board::count_holes(Bitmap& newState) 
@@ -672,14 +680,14 @@ int Board::full_cells_weighted(Bitmap& newState) {
 float Board::get_score(Bitmap& newState) {
   float score = 0.0;
 
-  float params[] = {20, 1, 1, 1, 1, 1, 0};
+  float params[] = {20, 1, 2, 5, 5, 0, 10};
 
   score += params[0]*count_holes(newState);
   score += params[1]*altitude(newState);
   score += params[2]*full_cells(newState);
   score += params[3]*higher_slope(newState);
   score += params[4]*roughness(newState);
-  score += params[5]*full_cells_weighted(newState);
+  //score += params[5]*full_cells_weighted(newState);
   score += params[6]*countComponents(newState);
   return score;
 }
@@ -744,7 +752,9 @@ int main(int argc, char** argv) {
   Board board(state);
 
   board.generate_moves();
-  board.choose_move();
+  board.choose_move(1);
+
+  board.print_moves(board.best);
 
   // // Make some moves!
   // vector<string> moves;

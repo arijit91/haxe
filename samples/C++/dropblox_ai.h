@@ -1,3 +1,4 @@
+#include "omp.h"
 #include "json/reader.h"
 #include "json/elements.h"
 
@@ -78,6 +79,11 @@ class Block {
 
 class Board {
  public:
+  vector<string> best;
+  float min_score;
+
+  map<posn, vector<string> > commands;
+
   int rows;
   int cols;
   Bitmap bitmap;
@@ -111,8 +117,9 @@ class Board {
   // This is okay because we don't expect to look ahead that far.
   Board* place();
 
+  void print_moves(vector<string>&);
   void generate_moves();
-  void choose_move();
+  void choose_move(int);
   // h0 = the number of holes in the playfield
   static int count_holes(Bitmap& newState);
   // h1 = height of the higest point
