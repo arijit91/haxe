@@ -434,7 +434,7 @@ void Board::choose_move(int depth) {
     return ;
   }
 
-  for (int i = 0; i < scores.size() ; i++) {
+  for (int i = 0; i < scores.size() && i < 25 ; i++) {
     posn pos = scores[i].second;
 
     block->set_position(pos);
